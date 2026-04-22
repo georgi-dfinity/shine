@@ -1,0 +1,115 @@
+type Status = 
+ variant {
+   checking: record {userPrincipal: opt text;};
+   completed: record {
+                response: text;
+                userPrincipal: opt text;
+              };
+   failed: record {
+             error: text;
+             userPrincipal: opt text;
+           };
+ };
+type Product = 
+ record {
+   category: text;
+   description: text;
+   id: nat;
+   image: opt text;
+   name: text;
+   price: nat;
+ };
+type PaginationResult_1 = 
+ record {
+   currentPage: nat;
+   hasNextPage: bool;
+   hasPrevPage: bool;
+   items: vec Category;
+   totalItems: nat;
+   totalPages: nat;
+ };
+type PaginationResult = 
+ record {
+   currentPage: nat;
+   hasNextPage: bool;
+   hasPrevPage: bool;
+   items: vec Product;
+   totalItems: nat;
+   totalPages: nat;
+ };
+type CheckoutLineItem = 
+ record {
+   product_id: nat;
+   quantity: nat;
+ };
+type Category = 
+ record {
+   description: text;
+   image: opt text;
+   name: text;
+ };
+service : {
+  addAdmin: (newAdmin: principal) -> ();
+  addAllowedOrigin: (newOrigin: text) -> (text);
+  addCategory: (name: text, description: text, image: opt text) -> ();
+  addProduct: (name: text, description: text, price: nat, category: text,
+   image: opt text) -> ();
+  addTransaction: (session_id: text) -> (opt Status);
+  clearAllCategories: () -> (text);
+  clearAllProducts: () -> (text);
+  clearAllTransactions: () -> (text);
+  createCheckoutSession: (lineItems: vec CheckoutLineItem, successUrl: 
+   text, cancelUrl: text) -> (text);
+  deleteCategory: (name: text) -> ();
+  deleteProduct: (id: nat) -> ();
+  deleteTransaction: (session_id: text) -> (bool);
+  editProduct: (id: nat, name: text, description: text, price: nat, category:
+   text, image: opt text) -> ();
+  getAdmins: () -> (vec principal) query;
+  getAllCategories: () -> (vec text) query;
+  getAllowedOrigins: () -> (vec text) query;
+  getCategories: (page: opt nat, limit: opt nat) ->
+   (PaginationResult_1) query;
+  getProducts: (page: opt nat, limit: opt nat) -> (PaginationResult) query;
+  getProductsByCategory: (category: text, page: opt nat, limit: opt nat) ->
+   (PaginationResult) query;
+  getTransaction: (session_id: text) -> (opt Status) query;
+  getTransactionLineItems: (session_id: text, starting_after: opt text) ->
+   (text);
+  getTransactions: () -> (vec record {
+                                text;
+                                Status;
+                              }) query;
+  getTransactionsByPrincipal: () -> (vec record {
+                                           text;
+                                           Status;
+                                         }) query;
+  getUser: () -> (opt text) query;
+  initializeAuth: () -> ();
+  initializeData: (initCategories: vec Category, initProducts: vec Product,
+   initAllowedOrigins: vec text) -> (text);
+  isAdmin: () -> (bool) query;
+  removeAdmin: (adminToRemove: principal) -> ();
+  removeAllowedOrigin: (originToRemove: text) -> (text);
+  setAuthorization: (newAuthorization: text) -> ();
+  setUser: (name: text) -> ();
+  transform:
+   (record {
+      response:
+       record {
+         body: blob;
+         headers: vec record {
+                        name: text;
+                        value: text;
+                      };
+         status: nat;
+       };}) ->
+   (record {
+      body: blob;
+      headers: vec record {
+                     name: text;
+                     value: text;
+                   };
+      status: nat;
+    }) query;
+}

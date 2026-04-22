@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Override base styles */
+@layer base {
+  body {
+    font-family:
+      "Inter",
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .btn-primary {
+    @apply bg-black text-white border-2 border-black px-6 py-3 font-medium cursor-pointer transition-all duration-300 uppercase tracking-wider hover:bg-transparent hover:text-black;
+  }
+
+  .nav-link {
+    @apply bg-transparent border-none text-gray-600 text-base font-medium cursor-pointer transition-colors duration-200 py-2 relative hover:text-black;
+  }
+
+  .nav-link.active {
+    @apply text-black;
+  }
+
+  .nav-link.active::after {
+    @apply content-[''] absolute -bottom-0.5 left-0 right-0 h-0.5 bg-black;
+  }
+}
+
+/* Cart animation */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cart-panel {
+  animation: slide-in-right 0.3s ease-out;
+}
